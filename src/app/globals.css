@@ -1,26 +1,463 @@
-@import "tailwindcss";
+/* src/app/globals.css */
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Import the font you used in your <head> */
+@import url(https://fonts.googleapis.com/css?family=Monoton);
+/* Your styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: none;
+  font-family: 'Orbitron', sans-serif;
+}
+body {
+  background: linear-gradient(45deg, #1a0033, #2b004d, #390066, #1a0033);
+  background-size: 400% 400%;
+  animation: gradientBG 10s ease infinite;
+  position: relative;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+.nebula {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(
+              circle at 30% 30%,
+              rgba(255, 0, 150, 0.15),
+              transparent 70%
+            ),
+            radial-gradient(
+              circle at 70% 70%,
+              rgba(0, 255, 150, 0.15),
+              transparent 70%
+            );
+  animation: nebulaAnim 20s ease-in-out infinite;
+  z-index: 0.5;
+}
+@keyframes nebulaAnim {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(20deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+.starfield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+.starfield::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  background: white;
+  box-shadow: 50px 80px white,
+    100px 150px white,
+    150px 60px white,
+    200px 120px white,
+    250px 200px white,
+    300px 50px white,
+    350px 180px white,
+    400px 90px white,
+    450px 220px white,
+    500px 70px white,
+    550px 140px white,
+    600px 30px white,
+    650px 160px white,
+    700px 100px white,
+    750px 190px white,
+    800px 50px white;
+  animation: twinkle 3s infinite ease-in-out;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+#spaceInvadersCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 6;
+  pointer-events: none;
+}
+.background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.retro-border {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 15;
+  border: 5px solid;
+  border-radius: 10px;
+  /* Use a conic gradient with your theme colors */
+  border-image: conic-gradient(from 0deg, #E06AE0, #66a8d9, #8c73a8, #D42CCA, #E06AE0) 1;
+  /* Base subtle glow with reduced intensity */
+  box-shadow: 0 0 8px rgba(224, 106, 224, 0.1);
+}
+
+.grid-top {
+  position: fixed;
+  left: 0;
+  bottom: 460;
+  width: 100vw;
+  height: 100vh;
+  transform: perspective(1000px) rotateX(-50deg);
+  background: repeating-linear-gradient(
+      transparent,
+      transparent 48%,
+      #e06ae0 49%,
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 48%,
+      #e06ae0 49%,
+      transparent 50%
+    );
+  background-size: 50px 50px;
+  animation: gridScroll 8s linear infinite;
+  opacity: 0.8;
+  z-index: 1;
+  box-shadow: 0 0 20px rgba(224, 106, 224, 0.3);
+}
+@keyframes gridScroll {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 50px, 50px 0;
+  }
+}
+
+.grid {
+  position: fixed;
+  bottom: 60;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transform: perspective(1000px) rotateX(50deg);
+  background: repeating-linear-gradient(
+      transparent,
+      transparent 48%,
+      #e06ae0 49%,
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 48%,
+      #e06ae0 49%,
+      transparent 50%
+    );
+  background-size: 50px 50px;
+  animation: gridScroll 8s linear infinite;
+  opacity: 0.8;
+  z-index: 1;
+  box-shadow: 0 0 20px rgba(224, 106, 224, 0.3);
+}
+@keyframes gridScroll {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 50px, 50px 0;
+  }
+}
+
+.vapor-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(0, 0, 0, 0.3) 70%
+  );
+  pointer-events: none;
+  z-index: 2;
+  animation: pulse 5s infinite alternate;
+}
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+.sphere-container {
+  position: fixed;
+  top: 55%;
+  left: 50%;
+  width: 250px;
+  height: 250px;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  perspective: 800px;
+}
+.sphere {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    #e06ae0,
+    #66a8d9,
+    #8c73a8
+  );
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.5),
+    0 0 20px rgba(255, 255, 255, 0.5);
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+  animation: bubbleEffect 8s ease-in-out infinite;
+  position: relative;
+}
+@keyframes bubbleEffect {
+  0% {
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  50% {
+    filter: brightness(1.2) hue-rotate(180deg);
+  }
+  100% {
+    filter: brightness(1) hue-rotate(360deg);
+  }
+}
+.sphere::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.sphere.hit-animation::after {
+  animation: hitGlow 0.3s ease-out;
+}
+@keyframes hitGlow {
+  0% {
+    box-shadow: 0 0 0px 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 0px 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.neon{
+  font-family: 'Monoton', cursive;
+  font-size:135px;
+  color: #E06AE0;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%) perspective(1000px) rotateX(-50deg);
+  font-weight: 300;
+  letter-spacing: 8px;
+  text-shadow: 1px 0px 4px #E06AE0, 2px 0px 4px #E06AE0, 3px 0px 4px #E06AE0, 2px 0px 3px #D42CCA, 2px 3px 15px #D42CCA, 2px 0px 15px, 5px 0px 125px, 20px 0vw 200px #D42CCA,40px 0vw 200px #D42CCA;
+}
+
+.neon-jap {
+  font-family: 'Monoton', cursive;
+  font-size: 85px;
+  color: #66a8d9; /* Changed to a cyan tone from your theme */
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%) perspective(1000px) rotateX(50deg);
+  font-weight: 300;
+  letter-spacing: 1px;
+  z-index: 5;
+  text-shadow: 
+    1px 0px 4px #66a8d9,
+    2px 0px 4px #66a8d9,
+    3px 0px 4px #66a8d9,
+    2px 0px 3px #66a8d9,
+    2px 3px 15px #66a8d9,
+    2px 0px 15px #66a8d9,
+    5px 0px 125px #66a8d9,
+    20px 0px 200px #66a8d9,
+    40px 0px 200px #66a8d9;
+}
+
+
+.flicker-slow{
+  animation: flicker 3s linear infinite;
+}
+
+.flicker-fast{
+  animation: flicker 1s linear infinite;
+}
+
+@keyframes flicker {
+	0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+		//text-shadow: none;
+    opacity: .99;
+		
+	}
+	20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+		opacity: 0.4;
+	}
+}
+.gif-container {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 5;
+}
+.cool-gif {
+  width: 50px;
+  height: auto;
+}
+
+.gif-container a {
+  cursor: none; /* Prevent the pointer/hand cursor */
+  text-decoration: none; /* Just in case we don't want underline etc. */
+}
+/* On hover, change the GIF’s color using a filter */
+.gif-container a:hover img {
+  filter: hue-rotate(80deg) brightness(1);
+  transition: filter 0.3s ease;
+}
+
+.scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 100% 4px;
+  animation: scan 3s linear infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+@keyframes scan {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 4px;
+  }
+}
+.custom-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e06ae0;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease-out;
+  z-index: 8;
+}
+.custom-cursor::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e06ae0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: cursorPulse 1.5s infinite;
+}
+@keyframes cursorPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #e06ae0;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: flicker 3s infinite;
+}
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+#visualizer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  z-index: 3;
+  pointer-events: none;
 }
