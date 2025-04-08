@@ -3,7 +3,7 @@ import './globals.css';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'pcrf.net :)',
+  title: 'pcrf.net:)',
   description: 'Hello World!',
 };
 

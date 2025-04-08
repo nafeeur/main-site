@@ -22,7 +22,6 @@ body {
   animation: gradientBG 10s ease infinite;
   position: relative;
 }
-
 @keyframes gradientBG {
   0% {
     background-position: 0% 50%;
@@ -52,7 +51,7 @@ body {
               rgba(0, 255, 150, 0.15),
               transparent 70%
             );
-  animation: nebulaAnim 20s ease-in-out infinite;
+  animation: nebulaAnim 15s ease-in-out infinite;
   z-index: 0.5;
 }
 @keyframes nebulaAnim {

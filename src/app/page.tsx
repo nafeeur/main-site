@@ -10,7 +10,7 @@ export default function Home() {
     let sphereScale = 1;
     let lastMouseX = window.innerWidth / 2;
     let lastMouseY = window.innerHeight / 2;
-    let counter = 15;
+    let counter = 25;
 
     const sphere = document.getElementById('sphere');
     document.addEventListener('mousemove', (e) => {
@@ -211,7 +211,6 @@ export default function Home() {
     }
     
     
-
     function update() {
       if (!gameCanvas) return;
       // Move spaceship
@@ -230,15 +229,17 @@ export default function Home() {
       bullets = bullets
         .map((b) => ({ x: b.x, y: b.y - bulletSpeed }))
         .filter((b) => b.y > 0);
-      // Update enemies
-      enemies.forEach((enemy) => {
-        enemy.y += enemySpeed;
-      });
-      enemies = enemies.filter((enemy) => enemy.y < gameCanvas.height + 50);
+      // Update enemies: Increase falling speed as the counter decreases.
 
+      // Here, ((25 - counter) * 0.1) increases the fall speed as the counter goes down.
+     enemies.forEach((enemy) => {
+     enemy.y += enemySpeed + ((25 - counter) * 1);
+     });
+      enemies = enemies.filter((enemy) => enemy.y < gameCanvas.height + 50);
       updateExplosions();
       checkCollisions();
     }
+    
 
     function checkCollisions() {
   // Bullets vs enemies
@@ -319,8 +320,12 @@ export default function Home() {
       
       // Calculate how much time has elapsed since the enemy spawned
       const elapsed = Date.now() - enemy.spawnTime;
-      // Compute rotation: complete a full rotation (2π radians) every 2000ms
-      const rotation = enemy.initialRotation + (elapsed / 10000) * 2 * Math.PI;
+
+     // Increase spin speed as the counter decreases.
+    // Here, for every point below 25, we increase the spin multiplier by 0.05.
+   const spinMultiplier = 1 + ((25 - counter) * 0.5);
+   const rotation = enemy.initialRotation + (elapsed / 10000) * 2 * Math.PI * spinMultiplier;
+      
       gCtx.rotate(rotation);
       
       switch (enemy.type) {
@@ -373,6 +378,7 @@ export default function Home() {
       }
       gCtx.restore();
     }
+   
       
 
     function draw() {
@@ -462,8 +468,6 @@ export default function Home() {
         <canvas id="visualizer"></canvas>
       </div>
       <div className="custom-cursor" id="customCursor"></div>
-      <div className="custom-cursor" id="customCursor"></div>
-
       <div
   id="enemyCounter"
   style={{
@@ -475,22 +479,23 @@ export default function Home() {
     fontSize: '50px',
     fontFamily: 'Orbitron, sans-serif', // or 'VT323, monospace' for a different look
     textShadow: '1px 0px 4px #e06ae0',
-    opacity: 0.8, // Adjust opacity for a subtle, translucent effect
+    opacity: 0.7, // Adjust opacity for a subtle, translucent effect
     zIndex: -1,
   }}
 >
-  15
+  25
 </div>
 
 
       <iframe
         width="0"
         height="0"
-        src="https://www.youtube.com/embed/OlAx0a82beU?autoplay=1&loop=1&playlist=OlAx0a82beU&controls=0&showinfo=0"
+        src="https://www.youtube.com/embed/EaCUyNQWY2M?autoplay=1&loop=1&playlist=EaCUyNQWY2M&controls=0&showinfo=0"
         frameBorder="0"
         allow="autoplay; encrypted-media"
         style={{ display: 'none' }}
       ></iframe>
     </>
+
   );
 }
