@@ -4,15 +4,24 @@ import { useEffect } from 'react';
 
 export default function Home() {
   useEffect(() => {
-    // ---------------------------------------
-    // Custom Cursor & Sphere Parallax Script
-    // ---------------------------------------
+    // ---------------------------
+    // Setup state variables
+    // ---------------------------
     let sphereScale = 1;
     let lastMouseX = window.innerWidth / 2;
     let lastMouseY = window.innerHeight / 2;
     let counter = 25;
 
+    // ---------------------------
+    // Get DOM elements
+    // ---------------------------
     const sphere = document.getElementById('sphere');
+    const cursor = document.getElementById('customCursor');
+
+    // ---------------------------
+    // Unified mousemove event handler
+    // Updates both sphere transformation and custom cursor position
+    // ---------------------------
     document.addEventListener('mousemove', (e) => {
       lastMouseX = e.clientX;
       lastMouseY = e.clientY;
@@ -21,21 +30,17 @@ export default function Home() {
       if (sphere) {
         sphere.style.transform = `scale(${sphereScale}) rotateX(${-yPercent}deg) rotateY(${xPercent}deg)`;
       }
-    });
-
-    const cursor = document.getElementById('customCursor');
-    document.addEventListener('mousemove', (e) => {
       if (cursor) {
-        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        // Use translate3d for hardware acceleration
+        cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
       }
     });
 
-    // ---------------------------------------
-    // Subtle Wave Visualizer Script
-    // ---------------------------------------
+    // ---------------------------
+    // Wave Visualizer Setup
+    // ---------------------------
     const visualizer = document.getElementById('visualizer') as HTMLCanvasElement | null;
     const ctx = visualizer ? visualizer.getContext('2d') : null;
-
     function resizeVisualizer() {
       if (visualizer) {
         visualizer.width = window.innerWidth;
@@ -44,35 +49,13 @@ export default function Home() {
     }
     window.addEventListener('resize', resizeVisualizer);
     resizeVisualizer();
-
     let time = 0;
-    function animateWave() {
-      if (!ctx || !visualizer) return;
-      ctx.clearRect(0, 0, visualizer.width, visualizer.height);
-      time += 0.02;
-      ctx.beginPath();
-      const amplitude = visualizer.height / 4;
-      const frequency = 0.01;
-      ctx.moveTo(0, visualizer.height / 2 + Math.sin(0 * frequency + time) * amplitude);
-      for (let x = 0; x < visualizer.width; x++) {
-        const y = visualizer.height / 2 + Math.sin(x * frequency + time) * amplitude;
-        ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = 'rgba(224, 106, 224, 0.15)';
-      ctx.lineWidth = 2;
-      ctx.shadowColor = 'rgba(224, 106, 224, 0.15)';
-      ctx.shadowBlur = 5;
-      ctx.stroke();
-      requestAnimationFrame(animateWave);
-    }
-    animateWave();
 
-    // ---------------------------------------
-    // Simple Space Invaders Game Script
-    // ---------------------------------------
+    // ---------------------------
+    // Space Invaders Game Setup
+    // ---------------------------
     const gameCanvas = document.getElementById('spaceInvadersCanvas') as HTMLCanvasElement | null;
     const gCtx = gameCanvas ? gameCanvas.getContext('2d') : null;
-
     function resizeGameCanvas() {
       if (gameCanvas) {
         gameCanvas.width = window.innerWidth;
@@ -87,26 +70,27 @@ export default function Home() {
     const spaceshipWidth = 40;
     const spaceshipHeight = 40;
     const spaceshipSpeed = 8;
-
     let bullets: { x: number; y: number }[] = [];
     const bulletSpeed = 10;
-
     let enemies: Array<{
       x: number;
       y: number;
       size: number;
       type: string;
       hit?: boolean;
+      spawnTime?: number;
+      initialRotation?: number;
     }> = [];
     const enemySpeed = 2;
     const spawnInterval = 1500;
-
     let leftPressed = false;
     let rightPressed = false;
     let spacePressed = false;
-
     const shapeTypes = ['circle', 'square', 'triangle', 'diamond', 'star'];
 
+    // ---------------------------
+    // Key press listeners for game controls
+    // ---------------------------
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft' || e.key === 'a') leftPressed = true;
       if (e.key === 'ArrowRight' || e.key === 'd') rightPressed = true;
@@ -118,11 +102,10 @@ export default function Home() {
       if (e.key === ' ') spacePressed = false;
     });
 
-    // ---------------------------------------
-    // Explosion Effects for Blasted Enemies
-    // ---------------------------------------
+    // ---------------------------
+    // Explosion Effects
+    // ---------------------------
     let explosions: any[] = [];
-
     function hexToRgb(hex: string) {
       hex = hex.replace(/^#/, '');
       let bigint = parseInt(hex, 16);
@@ -131,24 +114,22 @@ export default function Home() {
       let b = bigint & 255;
       return `${r}, ${g}, ${b}`;
     }
-
     function spawnExplosion(x: number, y: number, color: string) {
-      const particleCount = 15;
+      const particleCount = 10; // reduced particle count for performance
       const particles = [];
       for (let i = 0; i < particleCount; i++) {
         particles.push({
-          x: x,
-          y: y,
+          x,
+          y,
           vx: (Math.random() - 0.5) * 4,
           vy: (Math.random() - 0.5) * 4,
           life: 1.0,
           size: Math.random() * 3 + 2,
-          color: color,
+          color,
         });
       }
       explosions.push({ particles });
     }
-
     function getEnemyColor(type: string) {
       switch (type) {
         case 'circle':
@@ -171,7 +152,6 @@ export default function Home() {
         counterElement.textContent = counter.toString();
       }
     }
-    
     function updateExplosions() {
       for (let i = explosions.length - 1; i >= 0; i--) {
         let exp = explosions[i];
@@ -185,7 +165,6 @@ export default function Home() {
         }
       }
     }
-
     function drawExplosions() {
       if (!gCtx) return;
       explosions.forEach(exp => {
@@ -198,71 +177,70 @@ export default function Home() {
       });
     }
 
+    // ---------------------------
+    // Enemy Spawning
+    // ---------------------------
     function spawnEnemy() {
       if (!gameCanvas) return;
       const x = Math.random() * (gameCanvas.width - 50) + 25;
       const y = -50;
       const size = 30 + Math.random() * 15;
       const type = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
-      // Record the time the enemy spawns and a random initial rotation
       const spawnTime = Date.now();
       const initialRotation = Math.random() * Math.PI * 2;
       enemies.push({ x, y, size, type, spawnTime, initialRotation });
     }
-    
-    
+
+    // ---------------------------
+    // Game Update Logic
+    // ---------------------------
     function update() {
       if (!gameCanvas) return;
       // Move spaceship
       if (leftPressed) spaceshipX -= spaceshipSpeed;
       if (rightPressed) spaceshipX += spaceshipSpeed;
-      if (spaceshipX < 0) spaceshipX = 0;
-      if (spaceshipX + spaceshipWidth > gameCanvas.width) {
-        spaceshipX = gameCanvas.width - spaceshipWidth;
-      }
+      spaceshipX = Math.max(0, Math.min(spaceshipX, gameCanvas.width - spaceshipWidth));
       // Fire bullet
       if (spacePressed) {
         bullets.push({ x: spaceshipX + spaceshipWidth / 2, y: spaceshipY });
         spacePressed = false;
       }
-      // Update bullets
+      // Update bullets positions
       bullets = bullets
-        .map((b) => ({ x: b.x, y: b.y - bulletSpeed }))
-        .filter((b) => b.y > 0);
-      // Update enemies: Increase falling speed as the counter decreases.
-
-      // Here, ((25 - counter) * 0.1) increases the fall speed as the counter goes down.
-     enemies.forEach((enemy) => {
-     enemy.y += enemySpeed + ((25 - counter) * 1);
-     });
-      enemies = enemies.filter((enemy) => enemy.y < gameCanvas.height + 50);
+        .map(b => ({ x: b.x, y: b.y - bulletSpeed }))
+        .filter(b => b.y > 0);
+      // Update enemies positions; increase falling speed as counter decreases
+      enemies.forEach(enemy => {
+        enemy.y += enemySpeed + ((25 - counter) * 1);
+      });
+      enemies = enemies.filter(enemy => enemy.y < gameCanvas.height + 50);
       updateExplosions();
       checkCollisions();
     }
-    
 
+    // ---------------------------
+    // Collision Detection
+    // ---------------------------
     function checkCollisions() {
-  // Bullets vs enemies
-  bullets.forEach((bullet) => {
-    enemies.forEach((enemy) => {
-      const distX = bullet.x - enemy.x;
-      const distY = bullet.y - enemy.y;
-      const distance = Math.sqrt(distX * distX + distY * distY);
-      if (distance < enemy.size) {
-        enemy.hit = true;
-        spawnExplosion(enemy.x, enemy.y, getEnemyColor(enemy.type));
-        // Decrement the counter for each hit
-        counter--;
-        updateCounterDisplay();
-        // Redirect when the counter reaches 0 or below
-        if (counter <= 0) {
-          window.location.href = "https://www.linkedin.com/in/nafeeur/";
-        }
-      }
-    });
-  });
-  enemies = enemies.filter((enemy) => !enemy.hit);
-      // Bullets vs sphere
+      // Bullet vs enemy collisions
+      bullets.forEach(bullet => {
+        enemies.forEach(enemy => {
+          const dx = bullet.x - enemy.x;
+          const dy = bullet.y - enemy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < enemy.size) {
+            enemy.hit = true;
+            spawnExplosion(enemy.x, enemy.y, getEnemyColor(enemy.type));
+            counter--;
+            updateCounterDisplay();
+            if (counter <= 0) {
+              window.location.href = "https://www.linkedin.com/in/nafeeur/";
+            }
+          }
+        });
+      });
+      enemies = enemies.filter(enemy => !enemy.hit);
+      // Bullet vs sphere collisions
       const sphereRect = sphere?.getBoundingClientRect();
       if (!sphereRect) return;
       for (let i = bullets.length - 1; i >= 0; i--) {
@@ -286,12 +264,15 @@ export default function Home() {
       }
     }
 
+    // ---------------------------
+    // Drawing Functions
+    // ---------------------------
     function drawSpaceship(x: number, y: number, w: number, h: number) {
       if (!gCtx) return;
       gCtx.save();
       gCtx.translate(x + w / 2, y + h / 5);
       gCtx.rotate(Math.sin(Date.now() / 100) * 0.05);
-      // Draw spaceship (triangle)
+      // Draw spaceship shape (triangle)
       gCtx.fillStyle = '#00ffff';
       gCtx.beginPath();
       gCtx.moveTo(0, -h / 2);
@@ -299,7 +280,7 @@ export default function Home() {
       gCtx.lineTo(-w / 2, h / 2);
       gCtx.closePath();
       gCtx.fill();
-      // Draw engine flame behind the spaceship
+      // Draw engine flame
       const flameGradient = gCtx.createRadialGradient(0, h / 2, 0, 0, h / 2, h / 2 + 20);
       flameGradient.addColorStop(0, 'rgba(0, 255, 255, 0.8)');
       flameGradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
@@ -313,21 +294,15 @@ export default function Home() {
       gCtx.restore();
     }
 
-    function drawShape(enemy) {
+    function drawShape(enemy: any) {
       if (!gCtx) return;
       gCtx.save();
       gCtx.translate(enemy.x, enemy.y);
-      
-      // Calculate how much time has elapsed since the enemy spawned
-      const elapsed = Date.now() - enemy.spawnTime;
-
-     // Increase spin speed as the counter decreases.
-    // Here, for every point below 25, we increase the spin multiplier by 0.05.
-   const spinMultiplier = 1 + ((25 - counter) * 0.5);
-   const rotation = enemy.initialRotation + (elapsed / 10000) * 2 * Math.PI * spinMultiplier;
-      
+      // Calculate elapsed time since enemy spawn
+      const elapsed = Date.now() - (enemy.spawnTime || Date.now());
+      const spinMultiplier = 1 + ((25 - counter) * 0.5);
+      const rotation = (enemy.initialRotation || 0) + (elapsed / 10000) * 2 * Math.PI * spinMultiplier;
       gCtx.rotate(rotation);
-      
       switch (enemy.type) {
         case 'circle':
           gCtx.beginPath();
@@ -378,47 +353,63 @@ export default function Home() {
       }
       gCtx.restore();
     }
-   
-      
 
     function draw() {
       if (!gCtx || !gameCanvas) return;
+      // Clear game canvas and redraw game elements
       gCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
       drawSpaceship(spaceshipX, spaceshipY, spaceshipWidth, spaceshipHeight);
-      
-      // Draw bullets with a subtle glow and trailing effect
-      bullets.forEach((b) => {
+      bullets.forEach(b => {
         gCtx.beginPath();
         gCtx.arc(b.x, b.y, 5, 0, 2 * Math.PI);
         gCtx.shadowBlur = 8;
         gCtx.shadowColor = '#00ffff';
         gCtx.fillStyle = '#00ffff';
         gCtx.fill();
-        gCtx.shadowBlur = 0; // reset
+        gCtx.shadowBlur = 0;
       });
-      
-      enemies.forEach((enemy) => {
+      enemies.forEach(enemy => {
         drawShape(enemy);
       });
-      
-      
       drawExplosions();
     }
 
+    // ---------------------------
+    // Unified Game Loop (includes wave animation)
+    // ---------------------------
     function gameLoop() {
       update();
       draw();
+      // Animate the wave visualizer as part of the main loop
+      if (ctx && visualizer) {
+        ctx.clearRect(0, 0, visualizer.width, visualizer.height);
+        time += 0.02;
+        ctx.beginPath();
+        const amplitude = visualizer.height / 4;
+        const frequency = 0.01;
+        ctx.moveTo(0, visualizer.height / 2 + Math.sin(0 * frequency + time) * amplitude);
+        for (let x = 0; x < visualizer.width; x++) {
+          const y = visualizer.height / 2 + Math.sin(x * frequency + time) * amplitude;
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(224, 106, 224, 0.15)';
+        ctx.lineWidth = 2;
+        ctx.shadowColor = 'rgba(224, 106, 224, 0.15)';
+        ctx.shadowBlur = 5;
+        ctx.stroke();
+      }
       requestAnimationFrame(gameLoop);
     }
-
-    setInterval(spawnEnemy, spawnInterval);
     requestAnimationFrame(gameLoop);
+
+    // Spawn enemies at regular intervals
+    setInterval(spawnEnemy, spawnInterval);
   }, []);
 
   return (
     <>
       <div className="background">
-      <div className="nebula"></div>
+        <div className="nebula"></div>
         <div className="starfield"></div>
         <canvas id="spaceInvadersCanvas"></canvas>
         <div className="grid-top"></div>
@@ -426,24 +417,21 @@ export default function Home() {
         <div className="retro-border"></div>
         <div className="vapor-overlay"></div>
         <h1 className="neon" data-text="U">
-          na<span className="flicker-slow">f</span>ee
-          <span className="flicker-fast">u</span>r
+          na<span className="flicker-slow">f</span>ee<span className="flicker-fast">u</span>r
         </h1>
         <h1 className="neon-jap" data-text="U">バットマン</h1>
         <div className="sphere-container">
-     
           <div className="sphere" id="sphere"></div>
         </div>
         <div className="gif-container">
-        {/* Add an anchor tag, linking to GitHub */}
-        <a href="https://github.com/nafeeur" target="_blank" rel="noopener noreferrer">
-          <img
-            src="https://64.media.tumblr.com/20029c5c8b4300b183415cc39a771f22/ec3f1f9bd5c76bac-13/s500x750/bdfcd4fb56356963766fe8cc9fa56420bc7b1ac9.gif"
-            alt="Cool GIF"
-            className="cool-gif"
-          />
-        </a>
-      </div>
+          <a href="https://github.com/nafeeur" target="_blank" rel="noopener noreferrer">
+            <img
+              src="https://64.media.tumblr.com/20029c5c8b4300b183415cc39a771f22/ec3f1f9bd5c76bac-13/s500x750/bdfcd4fb56356963766fe8cc9fa56420bc7b1ac9.gif"
+              alt="Cool GIF"
+              className="cool-gif"
+            />
+          </a>
+        </div>
         <div
           className="particle"
           style={{ top: '10%', left: '20%', animationDuration: '5s' }}
@@ -469,24 +457,22 @@ export default function Home() {
       </div>
       <div className="custom-cursor" id="customCursor"></div>
       <div
-  id="enemyCounter"
-  style={{
-    position: 'fixed',
-    bottom: '5px',
-    left: '40px',
-    transform: 'translateX(-50%)',
-    color: '#e06ae0',
-    fontSize: '50px',
-    fontFamily: 'Orbitron, sans-serif', // or 'VT323, monospace' for a different look
-    textShadow: '1px 0px 4px #e06ae0',
-    opacity: 0.7, // Adjust opacity for a subtle, translucent effect
-    zIndex: -1,
-  }}
->
-  25
-</div>
-
-
+        id="enemyCounter"
+        style={{
+          position: 'fixed',
+          bottom: '5px',
+          left: '40px',
+          transform: 'translateX(-50%)',
+          color: '#e06ae0',
+          fontSize: '50px',
+          fontFamily: 'Orbitron, sans-serif',
+          textShadow: '1px 0px 4px #e06ae0',
+          opacity: 0.7,
+          zIndex: -1,
+        }}
+      >
+        25
+      </div>
       <iframe
         width="0"
         height="0"
@@ -496,6 +482,5 @@ export default function Home() {
         style={{ display: 'none' }}
       ></iframe>
     </>
-
   );
 }

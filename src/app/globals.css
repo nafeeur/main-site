@@ -2,7 +2,8 @@
 
 /* Import the font you used in your <head> */
 @import url(https://fonts.googleapis.com/css?family=Monoton);
-/* Your styles */
+
+/* Global Reset and Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -34,7 +35,7 @@ body {
   }
 }
 
-
+/* Nebula Effect */
 .nebula {
   position: absolute;
   top: -10%;
@@ -65,6 +66,8 @@ body {
     transform: scale(1) rotate(0deg);
   }
 }
+
+/* Starfield */
 .starfield {
   position: absolute;
   top: 0;
@@ -101,8 +104,7 @@ body {
   animation: twinkle 3s infinite ease-in-out;
 }
 @keyframes twinkle {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.3;
   }
   50% {
@@ -110,6 +112,7 @@ body {
   }
 }
 
+/* Canvas & Background Containers */
 #spaceInvadersCanvas {
   position: absolute;
   top: 0;
@@ -126,6 +129,7 @@ body {
   overflow: hidden;
 }
 
+/* Retro Border */
 .retro-border {
   position: fixed;
   top: 0;
@@ -136,16 +140,15 @@ body {
   z-index: 15;
   border: 5px solid;
   border-radius: 10px;
-  /* Use a conic gradient with your theme colors */
   border-image: conic-gradient(from 0deg, #E06AE0, #66a8d9, #8c73a8, #D42CCA, #E06AE0) 1;
-  /* Base subtle glow with reduced intensity */
   box-shadow: 0 0 8px rgba(224, 106, 224, 0.1);
 }
 
+/* Grid Elements */
 .grid-top {
   position: fixed;
   left: 0;
-  bottom: 460;
+  bottom: 460px;
   width: 100vw;
   height: 100vh;
   transform: perspective(1000px) rotateX(-50deg);
@@ -168,18 +171,9 @@ body {
   z-index: 1;
   box-shadow: 0 0 20px rgba(224, 106, 224, 0.3);
 }
-@keyframes gridScroll {
-  from {
-    background-position: 0 0, 0 0;
-  }
-  to {
-    background-position: 0 50px, 50px 0;
-  }
-}
-
 .grid {
   position: fixed;
-  bottom: 60;
+  bottom: 60px;
   left: 0;
   width: 100vw;
   height: 100vh;
@@ -212,6 +206,7 @@ body {
   }
 }
 
+/* Vapor Overlay */
 .vapor-overlay {
   position: absolute;
   top: 0;
@@ -235,6 +230,8 @@ body {
     opacity: 0.6;
   }
 }
+
+/* Sphere Container and Sphere */
 .sphere-container {
   position: fixed;
   top: 55%;
@@ -261,6 +258,7 @@ body {
   transition: transform 0.1s ease-out;
   animation: bubbleEffect 8s ease-in-out infinite;
   position: relative;
+  will-change: transform;
 }
 @keyframes bubbleEffect {
   0% {
@@ -298,9 +296,10 @@ body {
   }
 }
 
-.neon{
+/* Neon Text Styles */
+.neon {
   font-family: 'Monoton', cursive;
-  font-size:135px;
+  font-size: 135px;
   color: #E06AE0;
   position: absolute;
   top: 10%;
@@ -308,13 +307,13 @@ body {
   transform: translate(-50%, -50%) perspective(1000px) rotateX(-50deg);
   font-weight: 300;
   letter-spacing: 8px;
-  text-shadow: 1px 0px 4px #E06AE0, 2px 0px 4px #E06AE0, 3px 0px 4px #E06AE0, 2px 0px 3px #D42CCA, 2px 3px 15px #D42CCA, 2px 0px 15px, 5px 0px 125px, 20px 0vw 200px #D42CCA,40px 0vw 200px #D42CCA;
+  text-shadow: 1px 0px 4px #E06AE0, 2px 0px 4px #E06AE0, 3px 0px 4px #E06AE0, 2px 0px 3px #D42CCA,
+    2px 3px 15px #D42CCA, 2px 0px 15px, 5px 0px 125px, 20px 0vw 200px #D42CCA, 40px 0vw 200px #D42CCA;
 }
-
 .neon-jap {
   font-family: 'Monoton', cursive;
   font-size: 85px;
-  color: #66a8d9; /* Changed to a cyan tone from your theme */
+  color: #66a8d9;
   position: absolute;
   top: 25%;
   left: 50%;
@@ -322,37 +321,27 @@ body {
   font-weight: 300;
   letter-spacing: 1px;
   z-index: 5;
-  text-shadow: 
-    1px 0px 4px #66a8d9,
-    2px 0px 4px #66a8d9,
-    3px 0px 4px #66a8d9,
-    2px 0px 3px #66a8d9,
-    2px 3px 15px #66a8d9,
-    2px 0px 15px #66a8d9,
-    5px 0px 125px #66a8d9,
-    20px 0px 200px #66a8d9,
-    40px 0px 200px #66a8d9;
+  text-shadow: 1px 0px 4px #66a8d9, 2px 0px 4px #66a8d9, 3px 0px 4px #66a8d9, 2px 0px 3px #66a8d9,
+    2px 3px 15px #66a8d9, 2px 0px 15px #66a8d9, 5px 0px 125px #66a8d9, 20px 0px 200px #66a8d9, 40px 0px 200px #66a8d9;
 }
 
-
-.flicker-slow{
-  animation: flicker 3s linear infinite;
+/* Flicker Animations for Neon Text */
+.flicker-slow {
+  animation: flickerSlow 3s linear infinite;
+}
+.flicker-fast {
+  animation: flickerSlow 1s linear infinite;
+}
+@keyframes flickerSlow {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 0.99;
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.4;
+  }
 }
 
-.flicker-fast{
-  animation: flicker 1s linear infinite;
-}
-
-@keyframes flicker {
-	0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
-		//text-shadow: none;
-    opacity: .99;
-		
-	}
-	20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
-		opacity: 0.4;
-	}
-}
+/* GIF Container */
 .gif-container {
   position: fixed;
   bottom: 10px;
@@ -363,17 +352,16 @@ body {
   width: 50px;
   height: auto;
 }
-
 .gif-container a {
-  cursor: none; /* Prevent the pointer/hand cursor */
-  text-decoration: none; /* Just in case we don't want underline etc. */
+  cursor: none;
+  text-decoration: none;
 }
-/* On hover, change the GIF’s color using a filter */
 .gif-container a:hover img {
   filter: hue-rotate(80deg) brightness(1);
   transition: filter 0.3s ease;
 }
 
+/* Scanline Effect */
 .scanline {
   position: absolute;
   top: 0;
@@ -398,6 +386,8 @@ body {
     background-position: 0 4px;
   }
 }
+
+/* Custom Cursor */
 .custom-cursor {
   position: absolute;
   top: 0;
@@ -410,6 +400,7 @@ body {
   transform: translate(-50%, -50%);
   transition: transform 0.1s ease-out;
   z-index: 8;
+  will-change: transform;
 }
 .custom-cursor::after {
   content: "";
@@ -433,6 +424,8 @@ body {
     opacity: 0;
   }
 }
+
+/* Particle Effects */
 .particle {
   position: absolute;
   width: 4px;
@@ -440,17 +433,17 @@ body {
   background: #e06ae0;
   border-radius: 50%;
   opacity: 0.2;
-  animation: flicker 3s infinite;
+  animation: flickerParticles 3s infinite;
 }
-@keyframes flicker {
-  0%,
-  100% {
+@keyframes flickerParticles {
+  0%, 100% {
     opacity: 0.1;
   }
   50% {
     opacity: 0.4;
   }
 }
+/* Visualizer Canvas */
 #visualizer {
   position: absolute;
   bottom: 0;
